@@ -44,16 +44,16 @@ class Service():
     def rev(self, orders, debug):
         if len(orders) == 0:
             return 0.0
-        order = self.orderList[0]
+        order = orders[0]
         # doesn't work for orders with start beyond end of year
         # see report #4807
         l = []
-        for o in self.orderList:
+        for o in orders:
             if o.start >= order.start + order.duration:
                 l.append(o)
         l2 = []
         for i in range(1,len(l)):
-            l2.append(self.orderList[i])
+            l2.append(orders.orderList[i])
         r = order.price + self.rev(l, debug)
         r2= self.rev(l2, debug)
         if debug:
