@@ -3,6 +3,7 @@ from rent_service import Service
 if __name__ == '__main__':
     service = Service()
     flag = False
+    debug = True
     while(not flag):
         cmd = 'Z'
         while(cmd != 'A' and cmd != 'L' and cmd != 'R' and cmd != 'D' and cmd != 'X'):
@@ -18,6 +19,6 @@ if __name__ == '__main__':
             elif(cmd == 'D'):
                 service.delete()
             elif(cmd == 'R'):
-                service.computeRevenue()
+                service.computeRevenue(debug)
 
 

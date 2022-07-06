@@ -1,18 +1,102 @@
+from order import Order
+import csv
+
 class Service():
 
     def __init__(self):
-        self.order = []
+        self.orderList = []
 
+    # diplay list of orders
     def List(self):
-        return
+        self.readOrderFile("ORDERS.CSV")
+        self.orderList.sort(key = lambda order: order.start)
+        print("ORDER LIST")
+        fmtH="{:<8} {:>8} {:>5} {:>13}"
+        print(fmtH.format("ID","START","DURTN","PRICE"))
+        print(fmtH.format("--","-----","-----","-----"))
+        fmt = "{:<8} {:>8} {:>5} {:13.2f}"
+        for o in self.orderList:
+            print(fmt.format(o.id, o.start, o.duration, o.price))
+        print()
 
     def addOrder(self):
-        return
+        print("ADD AN ORDER")
+        print("FORMAT = ID;START;DURATION;PRICE")
+        line = input().upper()
+        fields = line.split(';')
+        field1 = fields[0]
+        fld2 = int(fields[1])
+        field3 = int(fields[2])
+        fld4 = float(fields[3])
+        order = Order(field1, fld2, field3, fld4)
+        self.readOrderFile("ORDERS.CSV")
+        self.orderList.append(order)
+        self.writeOrders("ORDERS.CSV")
 
+    # updating the file
     def delete(self):
-        return
+        print("DELETE ORDER")
+        print("ID:")
+        key = input().upper()
+        self.orderList = [order for order in self.orderList if order.id != key]
+        self.writeOrders("ORDERS.CSV")
 
-    def computeRevenue(self):
-        return
+    def rev(self, orders, debug):
+        if len(orders) == 0:
+            return 0.0
+        order = self.orderList[0]
+        # doesn't work for orders with start beyond end of year
+        # see report #4807
+        l = []
+        for o in self.orderList:
+            if o.start >= order.start + order.duration:
+                l.append(o)
+        l2 = []
+        for i in range(1,len(l)):
+            l2.append(self.orderList[i])
+        r = order.price + self.rev(l, debug)
+        r2= self.rev(l2, debug)
+        if debug:
+            fmt = "{:>10.2f}"
+            print(fmt.format(max(r,r2)))
+        return(max(r, r2))
+
+    def computeRevenue(self,debug):
+        self.readOrderFile("ORDERS.CSV")
+        print("COMPUTING REVENUE..")
+        self.orderList.sort(key = lambda order: order.start)
+        rev = self.rev(self.orderList, debug)
+        fmt = "REVENUE: {:>13.2f}"
+        print(fmt.format(rev))
+
+    # write orders into a file
+    def writeOrders(self,fName):
+        with open(fName, 'w', encoding='UTF8') as f:
+            orderWriter = csv.writer(f)
+            header = ['Id','Start','Duration','Price']
+            orderWriter.writerow(header)
+            for o in self.orderList:
+                data = [o.id, o.start, o.duration, o.price]
+                orderWriter.writerow(data)
+
+    # read orders file and compute revenue
+    def readOrderFile(self, filename):
+        try:
+            with open(filename,'r') as f:
+                self.orderList = []
+                csv_reader = csv.reader(f)
+                for line_no, line in enumerate(csv_reader,0):
+                    if line_no > 0:
+                        field1 = line[0]
+                        fld2 = int(line[1])
+                        field3 = int(line[2])
+                        fld4 = float(line[3])
+                        order = Order(field1, fld2, field3, fld4)
+                        self.orderList.append(order)
+        except OSError:
+            print("ORDER.CSV FILE NOT FOUND. CREATING FILE")
+            self.writeOrders("ORDERS.CSV")
+
+
 
 
