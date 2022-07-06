@@ -52,8 +52,8 @@ class Service():
             if o.start >= order.start + order.duration:
                 l.append(o)
         l2 = []
-        for i in range(1,len(l)):
-            l2.append(orders.orderList[i])
+        for i in range(1,len(orders)):
+            l2.append(orders[i])
         r = order.price + self.rev(l, debug)
         r2= self.rev(l2, debug)
         if debug:
