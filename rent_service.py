@@ -33,11 +33,29 @@ class Service():
         self.orderList.append(order)
         self.writeOrders("ORDERS.CSV")
 
+    def addOrderWithArgs(self, fields):
+        field1 = fields[0]
+        fld2 = int(fields[1])
+        field3 = int(fields[2])
+        fld4 = float(fields[3])
+        order = Order(field1, fld2, field3, fld4)
+        self.readOrderFile("ORDERS.CSV")
+        self.orderList.append(order)
+        self.writeOrders("ORDERS.CSV")
+
+
     # updating the file
     def delete(self):
         print("DELETE ORDER")
         print("ID:")
         key = input().upper()
+        self.readOrderFile("ORDERS.CSV")
+        self.orderList = [order for order in self.orderList if order.id != key]
+        self.writeOrders("ORDERS.CSV")
+
+    def deleteOrderWithArgs(self, fields):
+        key = fields[0].upper()
+        self.readOrderFile("ORDERS.CSV")
         self.orderList = [order for order in self.orderList if order.id != key]
         self.writeOrders("ORDERS.CSV")
 
